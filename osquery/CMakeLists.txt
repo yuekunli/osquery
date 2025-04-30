@@ -33,6 +33,9 @@ function(osqueryMain)
   add_subdirectory("worker")
 
   generateOsqueryd()
+  #generateOsqueryTestExe()
+  #generateOsqueryTestExeUsingDll()
+  generateSmallOsqueryTestExeUsingDll()
 endfunction()
 
 function(generateOsqueryd)
@@ -45,7 +48,16 @@ function(generateOsqueryd)
     generateBuildTimeSourceFile(${source_file} "extern int main(int argc, char* argv[]);")
   endif()
   
-  add_osquery_executable(osqueryd "${source_file}")
+  #add_osquery_executable(osqueryd "${source_file}")
+
+  #add_osquery_static_lib(osqueryd "${source_file}")
+
+  #add_osquery_dynamic_lib(osqueryd "${source_file}")
+
+  add_osquery_dynamic_lib(osqueryd "${CMAKE_HOME_DIRECTORY}/osquery/osquery_wrapper.cpp")
+
+  
+
   set_target_properties(osqueryd PROPERTIES POSITION_INDEPENDENT_CODE true)
 
   target_link_libraries(osqueryd PRIVATE
@@ -53,23 +65,69 @@ function(generateOsqueryd)
     osquery_main
   )
 
-  set(osquery_ext "")
-  if(PLATFORM_WINDOWS)
-    set(osquery_ext ".exe")
+  #set(osquery_ext "")
+  #if(PLATFORM_WINDOWS)
+  #  set(osquery_ext ".exe")
 
     # Allows the use of wmain(...)
-    target_link_options(osqueryd PRIVATE
-      /ENTRY:wmainCRTStartup
-    )
-  endif()
+  #  target_link_options(osqueryd PRIVATE
+  #    /ENTRY:wmainCRTStartup
+  #  )
+  #endif()
 
-  add_custom_target(create_osqueryi ALL DEPENDS osqueryi${osquery_ext})
-  add_custom_command(OUTPUT osqueryi${osquery_ext}
-    COMMAND "${CMAKE_COMMAND}" -E create_symlink osqueryd${osquery_ext} osqueryi${osquery_ext}
-    WORKING_DIRECTORY "$<TARGET_FILE_DIR:osqueryd>"
-  )
-  add_dependencies(create_osqueryi osqueryd)
+  #add_custom_target(create_osqueryi ALL DEPENDS osqueryi${osquery_ext})
+  #add_custom_command(OUTPUT osqueryi${osquery_ext}
+  #  COMMAND "${CMAKE_COMMAND}" -E create_symlink osqueryd${osquery_ext} osqueryi${osquery_ext}
+  #  WORKING_DIRECTORY "$<TARGET_FILE_DIR:osqueryd>"
+  #)
+  #add_dependencies(create_osqueryi osqueryd)
 endfunction()
+
+function(generateOsqueryTestExe)
+  #add_osquery_executable
+
+  add_osquery_test_exe(osquerysimpletest "${CMAKE_HOME_DIRECTORY}/osquery/UseOsqueryAsStaticLib.cpp")
+
+  set_target_properties(osquerysimpletest PROPERTIES POSITION_INDEPENDENT_CODE true)
+
+  target_link_libraries(osquerysimpletest PRIVATE osqueryd)
+
+  target_link_libraries(osquerysimpletest PRIVATE
+    osquery_cxx_settings
+    osquery_main
+  )
+endfunction()
+
+function(generateOsqueryTestExeUsingDll)
+  #add_osquery_executable
+
+  add_osquery_test_exe(osquerysimpletestdll "${CMAKE_HOME_DIRECTORY}/osquery/UseOsqueryAsRuntimeDll.cpp")
+
+  set_target_properties(osquerysimpletestdll PROPERTIES POSITION_INDEPENDENT_CODE true)
+
+  #target_link_libraries(osquerysimpletest PRIVATE osqueryd)
+
+  target_link_libraries(osquerysimpletestdll PRIVATE
+    osquery_cxx_settings
+    osquery_main
+  )
+endfunction()
+
+function(generateSmallOsqueryTestExeUsingDll)
+  #add_osquery_executable
+
+  add_osquery_test_exe(osquerysimpletestdll_small "${CMAKE_HOME_DIRECTORY}/osquery/UseOsqueryAsRuntimeDllSmall.cpp")
+
+  set_target_properties(osquerysimpletestdll_small PROPERTIES POSITION_INDEPENDENT_CODE true)
+
+  #target_link_libraries(osquerysimpletest PRIVATE osqueryd)
+
+  #target_link_libraries(osquerysimpletestdll PRIVATE
+  #  osquery_cxx_settings
+  #  osquery_main
+  #)
+endfunction()
+
 
 function(enableOsqueryWEL)
   target_sources(osqueryd PRIVATE "${TOOLS_WEL_FILES_ROOT_DIR}/windows_resources.rc")
