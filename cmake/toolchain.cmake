@@ -11,6 +11,7 @@ if(OSQUERY_TOOLCHAIN_SYSROOT)
   overwrite_cache_variable("CMAKE_CXX_FLAGS_INIT" "STRING" "-stdlib=libc++ -gdwarf-4")
   overwrite_cache_variable("CMAKE_C_FLAGS_INIT" "STRING" "-gdwarf-4")
   overwrite_cache_variable("CMAKE_EXE_LINKER_FLAGS" "STRING" "-stdlib=libc++ -lc++abi")
+  overwrite_cache_variable("CMAKE_MODULE_LINKER_FLAGS" "STRING" "-stdlib=libc++ -lc++abi")
 else()
   option(OSQUERY_STATIC_BUILD "Whether to prefer linking static libraries or not")
 

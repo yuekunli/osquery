@@ -32,7 +32,40 @@ function(osqueryMain)
   add_subdirectory("system")
   add_subdirectory("worker")
 
-  generateOsqueryd()
+  #generateOsqueryd()
+  generateOsqueryLib()
+  #generateTestExe()
+  generateTestExeUsingDll()
+endfunction()
+
+function(generateOsqueryLib)
+
+  add_library(osqueryd MODULE "${CMAKE_HOME_DIRECTORY}/osquery/osquery_wrapper_linux.cpp")
+  
+  set_target_properties(osqueryd PROPERTIES POSITION_INDEPENDENT_CODE true)
+  target_link_libraries(osqueryd PRIVATE osquery_cxx_settings osquery_main)
+
+endfunction()
+
+
+function(generateTestExe)
+
+  add_executable(osquerysimpletest "${CMAKE_HOME_DIRECTORY}/osquery/osquery_simple_test_static_lib.cpp")
+
+  set_target_properties(osquerysimpletest PROPERTIES POSITION_INDEPENDENT_CODE true)
+
+  target_link_libraries(osquerysimpletest PRIVATE osqueryd)
+
+  target_link_libraries(osquerysimpletest PRIVATE
+    osquery_cxx_settings
+    osquery_main
+  )
+endfunction()
+
+function(generateTestExeUsingDll)
+  add_executable(osquerytestwithdll "${CMAKE_HOME_DIRECTORY}/osquery/osquery_simple_test_using_dll_linux.cpp")
+  set_target_properties(osquerytestwithdll PROPERTIES POSITION_INDEPENDENT_CODE true)
+
 endfunction()
 
 function(generateOsqueryd)

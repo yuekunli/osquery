@@ -1,0 +1,45 @@
+There are 3 files in the libdevmapper submodule that are changed.
+The original files cause compile errors.
+This directory also has the copies of the these 3 files after they are changed.
+
+The changes in these files were made before the necessary change in toolchain.cmake was made.
+In another word, the submodule may not need change at all, but I don't have to clean up the entire build directory
+and re-run build just to find out whether this submodule can work as it is.
+
+The changes in these 3 files are toward the end of each file respectively.
+
+
+
+
+adaptiva@debian-12-1:~/osquery/libraries/cmake/source/libdevmapper/src$ git status
+HEAD detached at 88f1565
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   libdm/datastruct/bitset.c
+        modified:   libdm/ioctl/libdm-iface.c
+        modified:   libdm/libdm-deptree.c
+
+
+
+
+All the changes that are made in the effort to build a dynamic library for Linux are made on top of the 5.17.0 tag.
+Here are the steps involving git:
+(1). git clone the original project (not the forked)
+(2). checkout a particular tag 5.17.0 (commit hash starts with 1ab05a6e4)
+     In order to not make the local repository a "head detached" state, I created a new local branch "release/5.17.0"
+(3). make source code and CMake file changes
+(4). set the remote url to my fork (git remote set-url https://github.com/yuekunli/osquery.git)
+(5). create yet another branch (I'm currently on release/5.17.0, created dev/5.17.0/dll-linux on top of release/5.17.0)
+(6). commit changes locally
+(7). push changes to remote (my fork)
+
+
+
+commit 1ab05a6e4a21b8a6b6531ed45ecc4a748b47f5d1 (HEAD -> dev/5.17.0/dll-linux, tag: 5.17.0, release/5.17.0)
+Author: Jaymz Julian <jaymz@artificial-stupidity.net>
+Date:   Tue Apr 15 21:56:17 2025 -0700
+
+    Filter the Win32_Processor query to only required fields (#8598)
+
+    Querying Win32_Processor for all fields has a performance penalty of 1.1s per CPU core - this is mostly unnoticable on small boxes, but on larger boxes can actualloy have a significant impact on startup performance.  Even on an 8 core system, this takes the startup time for osqueryi from 8.5s to 0.2s.
