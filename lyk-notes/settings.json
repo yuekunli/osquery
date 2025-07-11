@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "*.ipp": "cpp",
+        "memory": "cpp",
+        "algorithm": "cpp",
+        "random": "cpp",
+        "type_traits": "cpp",
+        "map": "cpp",
+        "bitset": "cpp",
+        "limits": "cpp",
+        "vector": "cpp"
+    },
+    "files.exclude": {
+        "out/**": true,
+        "build/**": true
+    },
+    "cmake.configureArgs": ["-DOSQUERY_VERSION=5.16.0"],
+    "cmake.buildDirectory": "${workspaceFolder}/out/build/x64-Debug",
+    "cmake.generator": "Ninja"
+}
