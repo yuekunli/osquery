@@ -32,7 +32,8 @@ function(osqueryMain)
   add_subdirectory("system")
   add_subdirectory("worker")
 
-  generateOsqueryd()
+  #generateOsqueryd()
+  generateOsqueryDylib()
 endfunction()
 
 function(generateOsqueryd)
@@ -69,6 +70,14 @@ function(generateOsqueryd)
     WORKING_DIRECTORY "$<TARGET_FILE_DIR:osqueryd>"
   )
   add_dependencies(create_osqueryi osqueryd)
+endfunction()
+
+function(generateOsqueryDylib)
+  add_library(osqueryd SHARED "${CMAKE_HOME_DIRECTORY}/osquery/osquery_wrapper.cpp")
+
+  set_target_properties(osqueryd PROPERTIES POSITION_INDEPENDENT_CODE true)
+
+  target_link_libraries(osqueryd PRIVATE osquery_cxx_settings osquery_main)
 endfunction()
 
 function(enableOsqueryWEL)
