@@ -1,5 +1,3 @@
-
-
 #include <vector>
 #include <string>
 #include <map>
@@ -9,6 +7,15 @@
 #include <osquery/core/tables.h>
 #include <osquery/sql/sql.h>
 
+static const int GEN_PROCESSES_TABLE_ID = 193;
+
+namespace osquery
+{
+    namespace tables
+    {
+      TableRows genProcesses(QueryContext& context);
+    }
+}
 
 namespace osquery {
 	namespace tables {
@@ -17,6 +24,7 @@ namespace osquery {
 		QueryData genAptSrcs(QueryContext& context);
 		QueryData genArpCache(QueryContext& context);
 		QueryData genAugeas(QueryContext& context);
+		QueryData getAuthorizedKeys(QueryContext& context);
 		QueryData genAzureMetadata(QueryContext& context);
 		QueryData genAzureTags(QueryContext& context);
 		QueryData genBlockDevs(QueryContext& context);
@@ -40,22 +48,18 @@ namespace osquery {
 		QueryData genCronTab(QueryContext& context);
 		QueryData genCurl(QueryContext& context);
 		QueryData genDebPackages(QueryContext& context);
+		QueryData genDeviceFile(QueryContext& context);
+		QueryData genDeviceHash(QueryContext& context);
+		QueryData genDevicePartitions(QueryContext& context);
 		QueryData genDNSResolvers(QueryContext& context);
 		QueryData genEc2InstanceTags(QueryContext& context);
 		QueryData genEc2Metadata(QueryContext& context);
 		QueryData genEtcHosts(QueryContext& context);
 		QueryData genEtcProtocols(QueryContext& context);
 		QueryData genEtcServices(QueryContext& context);
-		//QueryData genExample(QueryContext& context);
 		QueryData genFDEStatus(QueryContext& context);
 		QueryData genFile(QueryContext& context);
 		QueryData genFirefoxAddons(QueryContext& context);
-		//QueryData gengetAuthorizedKeys(QueryContext& context);
-		//QueryData gengetIntelMEInfo(QueryContext& context);
-		//QueryData gengetKnownHostsKeys(QueryContext& context);
-		//QueryData gengetMemoryInfo(QueryContext& context);
-		//QueryData gengetSshConfigs(QueryContext& context);
-		//QueryData gengetUserSshKeys(QueryContext& context);
 		QueryData genGroups(QueryContext& context);
 		QueryData genHash(QueryContext& context);
 		QueryData genImageHistory(QueryContext& context);
@@ -63,6 +67,7 @@ namespace osquery {
 		QueryData genImageLayers(QueryContext& context);
 		QueryData genImages(QueryContext& context);
 		QueryData genInfo(QueryContext& context);
+		QueryData getIntelMEInfo(QueryContext& context);
 		QueryData genInterfaceAddresses(QueryContext& context);
 		QueryData genInterfaceDetails(QueryContext& context);
 		QueryData genInterfaceIpv6(QueryContext& context);
@@ -70,6 +75,7 @@ namespace osquery {
 		QueryData genKernelInfo(QueryContext& context);
 		QueryData genKernelKeys(QueryContext& context);
 		QueryData genKernelModules(QueryContext& context);
+		QueryData getKnownHostsKeys(QueryContext& context);
 		QueryData genLastAccess(QueryContext& context);
 		QueryData genListeningPorts(QueryContext& context);
 		QueryData genLoadAverage(QueryContext& context);
@@ -92,6 +98,7 @@ namespace osquery {
 		QueryData genMemoryDeviceMappedAddresses(QueryContext& context);
 		QueryData genMemoryDevices(QueryContext& context);
 		QueryData genMemoryErrorInfo(QueryContext& context);
+		QueryData getMemoryInfo(QueryContext& context);
 		QueryData genMemoryMap(QueryContext& context);
 		QueryData genModelSpecificRegister(QueryContext& context);
 		QueryData genMounts(QueryContext& context);
@@ -113,7 +120,7 @@ namespace osquery {
 		QueryData genPipes(QueryContext& context);
 		QueryData genPlatformInfo(QueryContext& context);
 		QueryData genPortageKeywordSummary(QueryContext& context);
-		//QueryData genportagePackages(QueryContext& context);
+		QueryData portagePackages(QueryContext& context);
 		QueryData genPortageUse(QueryContext& context);
 		QueryData genProcessEnvs(QueryContext& context);
 		QueryData genProcessMemoryMap(QueryContext& context);
@@ -121,14 +128,13 @@ namespace osquery {
 		QueryData genPrometheusMetrics(QueryContext& context);
 		QueryData genPythonPackages(QueryContext& context);
 		QueryData genRoutes(QueryContext& context);
-		//QueryData genRpmPackageFiles(QueryContext& context);
 		QueryData genRpmPackages(QueryContext& context);
 		QueryData genSecureBoot(QueryContext& context);
 		QueryData genSELinuxSettings(QueryContext& context);
 		QueryData genShadow(QueryContext& context);
 		QueryData genSharedMemory(QueryContext& context);
-		//QueryData genShellHistory(QueryContext& context);
 		QueryData genSMBIOSTables(QueryContext& context);
+		QueryData getSshConfigs(QueryContext& context);
 		QueryData genStartupItems(QueryContext& context);
 		QueryData genSudoers(QueryContext& context);
 		QueryData genSuidBin(QueryContext& context);
@@ -141,6 +147,7 @@ namespace osquery {
 		QueryData genUptime(QueryContext& context);
 		QueryData genUSBDevices(QueryContext& context);
 		QueryData genUserGroups(QueryContext& context);
+		QueryData getUserSshKeys(QueryContext& context);
 		QueryData genUsers(QueryContext& context);
 		QueryData genVersion(QueryContext& context);
 		QueryData genVolumeLabels(QueryContext& context);
@@ -153,168 +160,295 @@ namespace osquery {
 	}
 }
 
-
-namespace osquery
-{
-    namespace tables
-    {
-      TableRows genProcesses(QueryContext& context);
-    }
-}
-
 struct AdaConstraint
 {
   unsigned char op;
   std::string expr;
 };
 
-
 using genDataFuncPtr = osquery::QueryData(*)(osquery::QueryContext&);
 
 genDataFuncPtr virtualTables[] = 
 {
-	osquery::tables::genACPITables, /*0*/
-	osquery::tables::genAppArmorProfiles, /*1*/
-	osquery::tables::genAptSrcs, /*2*/
-	osquery::tables::genArpCache, /*3*/
-	osquery::tables::genAugeas, /*4*/
-	osquery::tables::genAzureMetadata, /*5*/
-	osquery::tables::genAzureTags, /*6*/
-	osquery::tables::genBlockDevs, /*7*/
-	osquery::tables::genCarbonBlackInfo, /*8*/
-	osquery::tables::genCarves, /*9*/
-	osquery::tables::genCerts, /*10*/
-	osquery::tables::genChromeExtensionContentScripts, /*11*/
-	osquery::tables::genChromeExtensions, /*12*/
-	osquery::tables::genContainerEnvs, /*13*/
-	osquery::tables::genContainerFsChanges, /*14*/
-	osquery::tables::genContainerLabels, /*15*/
-	osquery::tables::genContainerMounts, /*16*/
-	osquery::tables::genContainerNetworks, /*17*/
-	osquery::tables::genContainerPorts, /*18*/
-	osquery::tables::genContainerProcesses, /*19*/
-	osquery::tables::genContainers, /*20*/
-	osquery::tables::genContainerStats, /*21*/
-	osquery::tables::genCPUID, /*22*/
-	osquery::tables::genCpuInfo, /*23*/
-	osquery::tables::genCpuTime, /*24*/
-	osquery::tables::genCronTab, /*25*/
-	osquery::tables::genCurl, /*26*/
-	osquery::tables::genDebPackages, /*27*/
-	osquery::tables::genDNSResolvers, /*28*/
-	osquery::tables::genEc2InstanceTags, /*29*/
-	osquery::tables::genEc2Metadata, /*30*/
-	osquery::tables::genEtcHosts, /*31*/
-	osquery::tables::genEtcProtocols, /*32*/
-	osquery::tables::genEtcServices, /*33*/
-	//osquery::tables::genExample, /*34*/
-	osquery::tables::genFDEStatus, /*35*/
-	osquery::tables::genFile, /*36*/
-	osquery::tables::genFirefoxAddons, /*37*/
-	//osquery::tables::gengetAuthorizedKeys, /*38*/
-	//osquery::tables::gengetIntelMEInfo, /*39*/
-	//osquery::tables::gengetKnownHostsKeys, /*40*/
-	//osquery::tables::gengetMemoryInfo, /*41*/
-	//osquery::tables::gengetSshConfigs, /*42*/
-	//osquery::tables::gengetUserSshKeys, /*43*/
-	osquery::tables::genGroups, /*44*/
-	osquery::tables::genHash, /*45*/
-	osquery::tables::genImageHistory, /*46*/
-	osquery::tables::genImageLabels, /*47*/
-	osquery::tables::genImageLayers, /*48*/
-	osquery::tables::genImages, /*49*/
-	osquery::tables::genInfo, /*50*/
-	osquery::tables::genInterfaceAddresses, /*51*/
-	osquery::tables::genInterfaceDetails, /*52*/
-	osquery::tables::genInterfaceIpv6, /*53*/
-	osquery::tables::genIptables, /*54*/
-	osquery::tables::genKernelInfo, /*55*/
-	osquery::tables::genKernelKeys, /*56*/
-	osquery::tables::genKernelModules, /*57*/
-	osquery::tables::genLastAccess, /*58*/
-	osquery::tables::genListeningPorts, /*59*/
-	osquery::tables::genLoadAverage, /*60*/
-	osquery::tables::genLoggedInUsers, /*61*/
-	osquery::tables::genLxdCerts, /*62*/
-	osquery::tables::genLxdCluster, /*63*/
-	osquery::tables::genLxdClusterMembers, /*64*/
-	osquery::tables::genLxdImages, /*65*/
-	osquery::tables::genLxdInstanceConfig, /*66*/
-	osquery::tables::genLxdInstanceDevices, /*67*/
-	osquery::tables::genLxdInstances, /*68*/
-	osquery::tables::genLxdNetworks, /*69*/
-	osquery::tables::genLxdStoragePools, /*70*/
-	osquery::tables::genMagicData, /*71*/
-	osquery::tables::genMDDevices, /*72*/
-	osquery::tables::genMDDrives, /*73*/
-	osquery::tables::genMDPersonalities, /*74*/
-	osquery::tables::genMemoryArrayMappedAddresses, /*75*/
-	osquery::tables::genMemoryArrays, /*76*/
-	osquery::tables::genMemoryDeviceMappedAddresses, /*77*/
-	osquery::tables::genMemoryDevices, /*78*/
-	osquery::tables::genMemoryErrorInfo, /*79*/
-	osquery::tables::genMemoryMap, /*80*/
-	osquery::tables::genModelSpecificRegister, /*81*/
-	osquery::tables::genMounts, /*82*/
-	osquery::tables::genNetworkLabels, /*83*/
-	osquery::tables::genNetworks, /*84*/
-	osquery::tables::genNodePackages, /*85*/
-	osquery::tables::genOEMStrings, /*86*/
-	osquery::tables::genOpenFiles, /*87*/
-	osquery::tables::genOpenSockets, /*88*/
-	osquery::tables::genOsqueryEvents, /*89*/
-	osquery::tables::genOsqueryExtensions, /*90*/
-	osquery::tables::genOsqueryFlags, /*91*/
-	osquery::tables::genOsqueryInfo, /*92*/
-	osquery::tables::genOsqueryPacks, /*93*/
-	osquery::tables::genOsqueryRegistry, /*94*/
-	osquery::tables::genOsquerySchedule, /*95*/
-	osquery::tables::genOSVersion, /*96*/
-	osquery::tables::genPCIDevices, /*97*/
-	osquery::tables::genPipes, /*98*/
-	osquery::tables::genPlatformInfo, /*99*/
-	osquery::tables::genPortageKeywordSummary, /*100*/
-	//osquery::tables::genportagePackages, /*101*/
-	osquery::tables::genPortageUse, /*102*/
-	osquery::tables::genProcessEnvs, /*103*/
-	osquery::tables::genProcessMemoryMap, /*105*/
-	osquery::tables::genProcessNamespaces, /*106*/
-	osquery::tables::genPrometheusMetrics, /*107*/
-	osquery::tables::genPythonPackages, /*108*/
-	osquery::tables::genRoutes, /*109*/
-	//osquery::tables::genRpmPackageFiles, /*110*/
-	osquery::tables::genRpmPackages, /*111*/
-	osquery::tables::genSecureBoot, /*112*/
-	osquery::tables::genSELinuxSettings, /*113*/
-	osquery::tables::genShadow, /*114*/
-	osquery::tables::genSharedMemory, /*115*/
-	//osquery::tables::genShellHistory, /*116*/
-	osquery::tables::genSMBIOSTables, /*117*/
-	osquery::tables::genStartupItems, /*118*/
-	osquery::tables::genSudoers, /*119*/
-	osquery::tables::genSuidBin, /*120*/
-	osquery::tables::genSystemControls, /*121*/
-	osquery::tables::genSystemdUnits, /*122*/
-	osquery::tables::genSystemInfo, /*123*/
-
-	osquery::tables::genTime, /*137*/
-	osquery::tables::genTLSCertificate, /*138*/
-	osquery::tables::genUlimitInfo, /*139*/
-	osquery::tables::genUptime, /*140*/
-	osquery::tables::genUSBDevices, /*141*/
-	osquery::tables::genUserGroups, /*142*/
-	osquery::tables::genUsers, /*143*/
-	osquery::tables::genVersion, /*144*/
-	osquery::tables::genVolumeLabels, /*145*/
-	osquery::tables::genVolumes, /*146*/
-	osquery::tables::genVSCodeExtensions, /*147*/
-	osquery::tables::genXattr, /*148*/
-	osquery::tables::genYara, /*149*/
-	osquery::tables::genYCloudMetadata, /*150*/
-	osquery::tables::genYumSrcs /*151*/
+	nullptr /*osquery::tables::genAccountpolicydata*/ /* 0 */,
+	osquery::tables::genACPITables, /*1*/
+	nullptr /*osquery::tables::genAdconfig*/ /* 2 */,
+	nullptr /*osquery::tables::genAlf*/ /* 3 */,
+	nullptr /*osquery::tables::genAlfexceptions*/ /* 4 */,
+	nullptr /*osquery::tables::genAlfexplicitauths*/ /* 5 */,
+	nullptr /*osquery::tables::genAppschemes*/ /* 6 */,
+	nullptr /*apparmor_events::genTable*/ /* 7 */,
+	osquery::tables::genAppArmorProfiles, /*8*/
+	nullptr /*osquery::tables::genShims*/ /* 9 */,
+	nullptr /*osquery::tables::genApps*/ /* 10 */,
+	osquery::tables::genAptSrcs, /*11*/
+	osquery::tables::genArpCache, /*12*/
+	nullptr /*osquery::tables::genAsl*/ /* 13 */,
+	osquery::tables::genAugeas, /*14*/
+	nullptr /*osquery::tables::genAuthenticode*/ /* 15 */,
+	nullptr /*osquery::tables::genAuthorizationmechanisms*/ /* 16 */,
+	nullptr /*osquery::tables::genAuthorizations*/ /* 17 */,
+	osquery::tables::getAuthorizedKeys /* 18 */,
+	nullptr /*osquery::tables::genAutoexec*/ /* 19 */,
+	osquery::tables::genAzureMetadata, /*20*/
+	osquery::tables::genAzureTags, /*21*/
+	nullptr /*osquery::tables::genBackgroundactivitiesmoderator*/ /* 22 */,
+	nullptr /*osquery::tables::genBatteryinfo*/ /* 23 */,
+	nullptr /*osquery::tables::genBitlockerinfo*/ /* 24 */,
+	osquery::tables::genBlockDevs, /*25*/
+	nullptr /*bpf_process_events::genTable*/ /* 26 */,
+	nullptr /*bpf_socket_events::genTable*/ /* 27 */,
+	nullptr /*osquery::tables::genBrowserplugins*/ /* 28 */,
+	osquery::tables::genCarbonBlackInfo, /*29*/
+	osquery::tables::genCarves, /*30*/
+	osquery::tables::genCerts, /*31*/
+	nullptr /*osquery::tables::genChassisinfo*/ /* 32 */,
+	nullptr /*osquery::tables::genChocolateypackages*/ /* 33 */,
+	osquery::tables::genChromeExtensionContentScripts, /*34*/
+	osquery::tables::genChromeExtensions, /*35*/
+	nullptr /*osquery::tables::genConnecteddisplays*/ /* 36 */,
+	nullptr /*osquery::tables::genConnectivity*/ /* 37 */,
+	osquery::tables::genCpuInfo, /*38*/
+	osquery::tables::genCpuTime, /*39*/
+	osquery::tables::genCPUID, /*40*/
+	nullptr /*osquery::tables::genCrashlogs*/ /* 41 */,
+	osquery::tables::genCronTab, /*42*/
+	nullptr /*osquery::tables::genCupsdestinations*/ /* 43 */,
+	nullptr /*osquery::tables::genCupsjobs*/ /* 44 */,
+	osquery::tables::genCurl, /*45*/
+	osquery::tables::genTLSCertificate, /*46*/
+	osquery::tables::genDebPackages, /*47*/
+	nullptr /*osquery::tables::genDefaultenvironment*/ /* 48 */,
+	osquery::tables::genDeviceFile /* 49 */,
+	nullptr /*osquery::tables::genDevicefirmware*/ /* 50 */,
+	osquery::tables::genDeviceHash /* 51 */,
+	osquery::tables::genDevicePartitions /* 52 */,
+	nullptr /*osquery::tables::genDeviceguardstatus*/ /* 53 */,
+	osquery::tables::genFDEStatus, /*54*/
+	nullptr /*osquery::tables::genTable*/ /* 55 */,
+	nullptr /*osquery::tables::genDiskinfo*/ /* 56 */,
+	nullptr /*osquery::tables::genDnscache*/ /* 57 */,
+	nullptr /*dns_lookup_events::genTable*/ /*58*/,
+	osquery::tables::genDNSResolvers, /*59*/
+	osquery::tables::genContainerEnvs, /*60*/
+	osquery::tables::genContainerFsChanges, /*61*/
+	osquery::tables::genContainerLabels, /*62*/
+	osquery::tables::genContainerMounts, /*63*/
+	osquery::tables::genContainerNetworks, /*64*/
+	osquery::tables::genContainerPorts, /*65*/
+	osquery::tables::genContainerProcesses, /*66*/
+	osquery::tables::genContainerStats, /*67*/
+	osquery::tables::genContainers, /*68*/
+	osquery::tables::genImageHistory, /*69*/
+	osquery::tables::genImageLabels, /*70*/
+	osquery::tables::genImageLayers, /*71*/
+	osquery::tables::genImages, /*72*/
+	osquery::tables::genInfo, /*73*/
+	osquery::tables::genNetworkLabels, /*74*/
+	osquery::tables::genNetworks, /*75*/
+	osquery::tables::genVersion, /*76*/
+	osquery::tables::genVolumeLabels, /*77*/
+	osquery::tables::genVolumes, /*78*/
+	nullptr /*osquery::tables::genDrivers*/ /* 79 */,
+	osquery::tables::genEc2Metadata, /*80*/
+	osquery::tables::genEc2InstanceTags, /*81*/
+	nullptr /*osquery::tables::genTable*/ /* 82 */,
+	nullptr /*osquery::tables::genTable*/ /* 83 */,
+	osquery::tables::genEtcHosts, /*84*/
+	osquery::tables::genEtcProtocols, /*85*/
+	osquery::tables::genEtcServices, /*86*/
+	nullptr /*osquery::tables::genEventtaps*/ /* 87 */,
+	osquery::tables::genXattr, /*88*/
+	nullptr /*osquery::tables::genFanspeedsensors*/ /* 89 */,
+	osquery::tables::genFile, /*90*/
+	nullptr /*file_events::genTable*/ /* 91 */,
+	osquery::tables::genFirefoxAddons, /*92*/
+	nullptr /*osquery::tables::genGatekeeper*/ /* 93 */,
+	nullptr /*osquery::tables::genGatekeeperapprovedapps*/ /* 94 */,
+	osquery::tables::genGroups, /*95*/
+	nullptr /*hardware_events::genTable*/ /* 96 */,
+	osquery::tables::genHash, /*97*/
+	nullptr /*osquery::tables::genHomebrewpackages*/ /* 98 */,
+	nullptr /*osquery::tables::genIbridgeinfo*/ /* 99 */,
+	nullptr /*osquery::tables::genIeextensions*/ /* 100 */,
+	osquery::tables::getIntelMEInfo /* 101 */,
+	osquery::tables::genInterfaceAddresses, /*102*/
+	osquery::tables::genInterfaceDetails, /*103*/
+	osquery::tables::genInterfaceIpv6, /*104*/
+	nullptr /*osquery::tables::genIokitdevicetree*/ /* 105 */,
+	nullptr /*osquery::tables::genIokitregistry*/ /* 106 */,
+	osquery::tables::genIptables, /*107*/
+	nullptr /*osquery::tables::genKernelextensions*/ /* 108 */,
+	osquery::tables::genKernelInfo, /*109*/
+	osquery::tables::genKernelKeys, /*110*/
+	osquery::tables::genKernelModules, /*111*/
+	nullptr /*osquery::tables::genKernelpanics*/ /* 112 */,
+	nullptr /*osquery::tables::genKeychainaclapps*/ /* 113 */,
+	nullptr /*osquery::tables::genKeychainitems*/ /* 114 */,
+	osquery::tables::getKnownHostsKeys /* 115 */,
+	nullptr /*osquery::tables::genKvaspeculative*/ /* 116 */,
+	osquery::tables::genLastAccess, /*117*/
+	nullptr /*osquery::tables::genLaunchd*/ /* 118 */,
+	nullptr /*osquery::tables::genLaunchdoverrides*/ /* 119 */,
+	osquery::tables::genListeningPorts, /*120*/
+	osquery::tables::genLoadAverage, /*121*/
+	nullptr /*osquery::tables::genLocationservices*/ /* 122 */,
+	osquery::tables::genLoggedInUsers, /*123*/
+	nullptr /*osquery::tables::genLogicaldrives*/ /* 124 */,
+	nullptr /*osquery::tables::genQuerylogonsessions*/ /* 125 */,
+	osquery::tables::genLxdCerts, /*126*/
+	osquery::tables::genLxdCluster, /*127*/
+	osquery::tables::genLxdClusterMembers, /*128*/
+	osquery::tables::genLxdImages, /*129*/
+	osquery::tables::genLxdInstanceConfig, /*130*/
+	osquery::tables::genLxdInstanceDevices, /*131*/
+	osquery::tables::genLxdInstances, /*132*/
+	osquery::tables::genLxdNetworks, /*133*/
+	osquery::tables::genLxdStoragePools, /*134*/
+	osquery::tables::genMagicData, /*135*/
+	nullptr /*osquery::tables::genManagedpolicies*/ /* 136 */,
+	osquery::tables::genMDDevices, /*137*/
+	osquery::tables::genMDDrives, /*138*/
+	osquery::tables::genMDPersonalities, /*139*/
+	nullptr /*osquery::tables::genMdfindresults*/ /* 140 */,
+	nullptr /*osquery::tables::genMdlsresults*/ /* 141 */,
+	osquery::tables::genMemoryArrayMappedAddresses, /*142*/
+	osquery::tables::genMemoryArrays, /*143*/
+	osquery::tables::genMemoryDeviceMappedAddresses, /*144*/
+	osquery::tables::genMemoryDevices, /*145*/
+	osquery::tables::genMemoryErrorInfo, /*146*/
+	osquery::tables::getMemoryInfo /* 147 */,
+	osquery::tables::genMemoryMap, /*148*/
+	osquery::tables::genMounts, /*149*/
+	osquery::tables::genModelSpecificRegister, /*150*/
+	nullptr /*osquery::tables::genNfsshares*/ /* 151 */,
+	osquery::tables::genNodePackages, /*152*/
+	nullptr /*osquery::tables::genNtdomains*/ /* 153 */,
+	nullptr /*osquery::tables::genNtfsaclperms*/ /* 154 */,
+	nullptr /*osquery::tables::genTable*/ /* 155 */,
+	nullptr /*osquery::tables::genNvram*/ /* 156 */,
+	osquery::tables::genOEMStrings, /*157*/
+	nullptr /*osquery::tables::genOfficemru*/ /* 158 */,
+	osquery::tables::genOSVersion, /*159*/
+	osquery::tables::genOsqueryEvents, /*160*/
+	osquery::tables::genOsqueryExtensions, /*161*/
+	osquery::tables::genOsqueryFlags, /*162*/
+	osquery::tables::genOsqueryInfo, /*163*/
+	osquery::tables::genOsqueryPacks, /*164*/
+	osquery::tables::genOsqueryRegistry, /*165*/
+	osquery::tables::genOsquerySchedule, /*166*/
+	nullptr /*osquery::tables::genPackagebom*/ /* 167 */,
+	nullptr /*osquery::tables::genPackageinstallhistory*/ /* 168 */,
+	nullptr /*osquery::tables::genPackagereceipts*/ /* 169 */,
+	nullptr /*osquery::tables::genPasswordpolicy*/ /* 170 */,
+	nullptr /*osquery::tables::genInstalledpatches*/ /* 171 */,
+	osquery::tables::genPCIDevices, /*172*/
+	nullptr /*osquery::tables::genPhysicaldiskperformance*/ /* 173 */,
+	nullptr /*osquery::tables::genPipes*/ /*174*/,
+	osquery::tables::genPlatformInfo, /*175*/
+	nullptr /*osquery::tables::genOsxplist*/ /* 176 */,
+	osquery::tables::genPortageKeywordSummary, /*177*/
+	osquery::tables::portagePackages /* 178 */,
+	osquery::tables::genPortageUse, /*179*/
+	nullptr /*osquery::tables::genPowersensors*/ /* 180 */,
+	nullptr /*osquery::tables::genTable*/ /* 181 */,
+	nullptr /*osquery::tables::genOsxdefaultpreferences*/ /* 182 */,
+	nullptr /*osquery::tables::genPrefetch*/ /* 183 */,
+	osquery::tables::genProcessEnvs, /*184*/
+	nullptr /*osquery::tables::genTable*/ /* 185 */,
+	nullptr /*bpf_process_events::genTable*/ /* 186 */,
+	nullptr /*process_file_events::genTable*/ /* 187 */,
+	osquery::tables::genProcessMemoryMap, /*188*/
+	osquery::tables::genProcessNamespaces, /*189*/
+	osquery::tables::genOpenFiles, /*190*/
+	osquery::tables::genPipes, /*191*/
+	osquery::tables::genOpenSockets, /*192*/
+	nullptr /*osquery::tables::genProcesses*/ /* 193 */,
+	nullptr /*osquery::tables::genPrograms*/ /* 194 */,
+	osquery::tables::genPrometheusMetrics, /*195*/
+	osquery::tables::genPythonPackages, /*196*/
+	nullptr /*osquery::tables::genQuicklookcache*/ /* 197 */,
+	nullptr /*osquery::tables::genRegistry*/ /* 198 */,
+	osquery::tables::genRoutes, /*199*/
+	nullptr /*osquery::tables::genRpmPackageFiles*/ /* 200 */, /* not event but generator*/
+	osquery::tables::genRpmPackages, /*201*/
+	nullptr /*osquery::tables::genRunningapps*/ /* 202 */,
+	nullptr /*osquery::tables::genSafariextensions*/ /* 203 */,
+	nullptr /*osquery::tables::genSandboxcontainers*/ /* 204 */,
+	nullptr /*osquery::tables::genScheduledtasks*/ /* 205 */,
+	nullptr /*osquery::tables::genScreenlock*/ /* 206 */,
+	nullptr /*seccomp_events::genTable*/ /* 207 */,
+	osquery::tables::genSecureBoot, /*208*/
+	nullptr /*osquery::tables::genSecurityprofileinformation*/ /* 209 */,
+	nullptr /*selinux_events::genTable*/ /* 210 */,
+	osquery::tables::genSELinuxSettings, /*211*/
+	nullptr /*osquery::tables::genServices*/ /* 212 */,
+	osquery::tables::genShadow, /*213*/
+	nullptr /*osquery::tables::genSharedfolders*/ /* 214 */,
+	osquery::tables::genSharedMemory, /*215*/
+	nullptr /*osquery::tables::genShares*/ /* 216 */,
+	nullptr /*osquery::tables::genSharingpreferences*/ /* 217 */,
+	nullptr /*osquery::tables::genShellHistory*/ /* 218 */,
+	nullptr /*osquery::tables::genShellbags*/ /* 219 */,
+	nullptr /*osquery::tables::genShimcache*/ /* 220 */,
+	nullptr /*osquery::tables::genSignature*/ /* 221 */,
+	nullptr /*osquery::tables::genSipconfig*/ /* 222 */,
+	osquery::tables::genSMBIOSTables, /*223*/
+	nullptr /*osquery::tables::genSmckeys*/ /* 224 */,
+	nullptr /*bpf_socket_events::genTable*/ /* 225 */,
+	osquery::tables::getSshConfigs /* 226 */,
+	osquery::tables::genStartupItems, /*227*/
+	osquery::tables::genSudoers, /*228*/
+	osquery::tables::genSuidBin, /*229*/
+	nullptr /*SyslogEventSubscriber::genTable*/ /* 230 */,
+	osquery::tables::genSystemControls, /*231*/
+	nullptr /*osquery::tables::genSystemextensions*/ /* 232 */,
+	osquery::tables::genSystemInfo, /*233*/
+	osquery::tables::genSystemdUnits, /*234*/
+	nullptr /*osquery::tables::genTemperaturesensors*/ /* 235 */,
+	osquery::tables::genTime, /*236*/
+	nullptr /*osquery::tables::genTimemachinebackups*/ /* 237 */,
+	nullptr /*osquery::tables::genTimemachinedestinations*/ /* 238 */,
+	nullptr /*osquery::tables::genTpminfo*/ /* 239 */,
+	osquery::tables::genUlimitInfo, /*240*/
+	nullptr /*osquery::tables::genUnifiedlog*/ /* 241 */,
+	osquery::tables::genUptime, /*242*/
+	osquery::tables::genUSBDevices, /*243*/
+	nullptr /*user_events::genTable*/ /* 244 */,
+	osquery::tables::genUserGroups, /*245*/
+	nullptr /*osquery::tables::genTable*/ /* 246 */,
+	osquery::tables::getUserSshKeys /* 247 */,
+	nullptr /*osquery::tables::genUserassist*/ /* 248 */,
+	osquery::tables::genUsers, /*249*/
+	nullptr /*osquery::tables::genVideoinfo*/ /* 250 */,
+	nullptr /*osquery::tables::genVirtualmemoryinfo*/ /* 251 */,
+	osquery::tables::genVSCodeExtensions, /*252*/
+	nullptr /*osquery::tables::genKnownwifinetworks*/ /* 253 */,
+	nullptr /*osquery::tables::genWifistatus*/ /* 254 */,
+	nullptr /*osquery::tables::genWifiscan*/ /* 255 */,
+	nullptr /*osquery::tables::genBasenamedobjects*/ /* 256 */,
+	nullptr /*osquery::tables::genCrashlogs*/ /* 257 */,
+	nullptr /*osquery::tables::genWindowseventlog*/ /* 258 */,
+	nullptr /*osquery::tables::genTable*/ /* 259 */,
+	nullptr /*osquery::tables::genWindowsfirewallrules*/ /* 260 */,
+	nullptr /*osquery::tables::genWinoptionalfeatures*/ /* 261 */,
+	nullptr /*osquery::tables::genWindowssearch*/ /* 262 */,
+	nullptr /*osquery::tables::gen_Wsc*/ /* 263 */,
+	nullptr /*osquery::tables::gen_Wsp*/ /* 264 */,
+	nullptr /*osquery::tables::genWindowsupdatehistory*/ /* 265 */,
+	nullptr /*osquery::tables::genBiosinfo*/ /* 266 */,
+	nullptr /*osquery::tables::genWmicliconsumers*/ /* 267 */,
+	nullptr /*osquery::tables::genWmifilters*/ /* 268 */,
+	nullptr /*osquery::tables::genFilterconsumer*/ /* 269 */,
+	nullptr /*osquery::tables::genScriptconsumers*/ /* 270 */,
+	nullptr /*osquery::tables::genXprotectentries*/ /* 271 */,
+	nullptr /*osquery::tables::genXprotectmeta*/ /* 272 */,
+	nullptr /*osquery::tables::genXprotectreports*/ /* 273 */,
+	osquery::tables::genYara, /*274*/
+	nullptr /*yara_events::genTable*/ /* 275 */,
+	osquery::tables::genYCloudMetadata, /*276*/
+	osquery::tables::genYumSrcs /*277*/
 };
-
-// std::map<std::string, std::vector<AdaConstraint>>const & constraints
 
 using osquery::QueryData;
 using osquery::QueryContext;
@@ -441,10 +575,9 @@ void addQueryConstraint(void* handle, const char* key, unsigned char op, const c
 extern "C" __attribute__((visibility("default")))
 void* genDispatch(int tableId, void* constraintHandle)
 {
-  
   AQueryConstraint* aqc = static_cast<AQueryConstraint*>(constraintHandle);
 
-  if (tableId == 500)
+  if (tableId == GEN_PROCESSES_TABLE_ID)
   {
     osquery::TableRows results = osquery::tables::genProcesses(aqc->getCtx());
     
