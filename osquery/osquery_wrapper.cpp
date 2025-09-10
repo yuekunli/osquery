@@ -433,7 +433,7 @@ genDispatch(int tableId, std::map<std::string, std::vector<AdaConstraint>>const 
 
     for (auto const& tr : results)
     {
-      data.emplace_back(std::move(tr->operator osquery::Row()));
+      data.emplace_back(tr->operator osquery::Row());
     }
     return data;
   }
