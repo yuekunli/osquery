@@ -5,11 +5,6 @@
 
 #include<dlfcn.h>
 
-struct AdaConstraint {
-  unsigned char op;
-  std::string expr;
-  AdaConstraint(unsigned char _op, char const* _expr) : op(_op), expr(_expr) {}
-};
 
 
 using getConstraintHandlePrototype = void*(*)();
@@ -23,7 +18,7 @@ using getNextKeyPrototype = const char*(*)(void*);
 using getValuePrototype = const char*(*)(void*, size_t, const char*);
 
 
-int test11()
+int testFile()
 {
   std::cout << "loading dynamic lib" << std::endl;
   void* dlhandle = dlopen("/home/adaptiva/osquery/build/osquery/libosqueryd.so", RTLD_NOW);
@@ -91,7 +86,93 @@ int test11()
 
   return 0;
 }
+
+int testQueryTableNoConstraint(int tableId)
+{
+  std::cout << "loading dynamic lib" << std::endl;
+  void* dlhandle = dlopen("/home/adaptiva/osquery/build/osquery/libosqueryd.so", RTLD_NOW);
+  if (!dlhandle)
+  {
+    std::cerr<<"Fail to load dynamic lib"<<std::endl;
+    return 1;
+  }
+  std::cout<<"dynamic lib loaded"<<std::endl;
+
+  std::cout<<"finding function symbols"<<std::endl;
+
+  getConstraintHandlePrototype fptrGetConstraintHandle = reinterpret_cast<getConstraintHandlePrototype>(dlsym(dlhandle, "getConstraintHandle"));
+  destroyConstraintPrototype fptrDestroyConstraint = reinterpret_cast<destroyConstraintPrototype>(dlsym(dlhandle, "destroyConstraint"));
+  destroyQueryDataPrototype fptrDestroyQueryData = reinterpret_cast<destroyQueryDataPrototype>(dlsym(dlhandle, "destroyQueryData"));
+  addQueryConstraintPrototype fptrAddQueryConstraint = reinterpret_cast<addQueryConstraintPrototype>(dlsym(dlhandle, "addQueryConstraint"));
+  genDispatchPrototype fptrGenDispatch = reinterpret_cast<genDispatchPrototype>(dlsym(dlhandle, "genDispatch"));
+  getRowCountPrototype fptrGetRowCount = reinterpret_cast<getRowCountPrototype>(dlsym(dlhandle, "getRowCount"));
+  getColumnCountPrototype fptrGetColumnCount = reinterpret_cast<getColumnCountPrototype>(dlsym(dlhandle, "getColumnCount"));
+  getNextKeyPrototype fptrGetNextKey = reinterpret_cast<getNextKeyPrototype>(dlsym(dlhandle, "getNextKey"));
+  getValuePrototype fptrGetValue = reinterpret_cast<getValuePrototype>(dlsym(dlhandle, "getValue"));
+
+  void* qcHandle = fptrGetConstraintHandle();
+
+  void* qdHandle = fptrGenDispatch(tableId, qcHandle);
+
+  std::cout<<"query data handle: " << qdHandle << std::endl;
+
+  size_t rowCount = fptrGetRowCount(qdHandle);
+  
+  std::cout<<"row count: " << rowCount << std::endl;
+
+  size_t columnCount = fptrGetColumnCount(qdHandle);
+
+  std::cout<<"column count: " << columnCount << std::endl;
+
+  //const char** keys = new const char*[columnCount];
+
+  char(*keys)[256] = new char[columnCount][256];
+  
+  for (int i = 0; i < columnCount; ++i)
+  {
+    const char* key = fptrGetNextKey(qdHandle);
+    memset(keys[i], 0, 256);
+    memcpy(keys[i], key, strlen(key));
+  }
+
+  for (int i = 0; i < rowCount; ++i)
+  {
+    for (int j = 0; j < columnCount; ++j)
+    {
+      std::cout<<keys[j]<<": "<<fptrGetValue(qdHandle, i, keys[j])<<std::endl;
+    }
+  }
+  delete[] keys;
+  fptrDestroyConstraint(qcHandle);
+  fptrDestroyQueryData(qdHandle);
+
+  dlclose(dlhandle);
+
+  return 0;
+}
+
+int main()
+{
+  testQueryTableNoConstraint(109);
+  testQueryTableNoConstraint(109);
+  return 0;
+
+}
+
+
+
+//=======================================================
+
+
 #if 0
+
+struct AdaConstraint {
+  unsigned char op;
+  std::string expr;
+  AdaConstraint(unsigned char _op, char const* _expr) : op(_op), expr(_expr) {}
+};
+
+
 int test1()
 {
   std::cout << "Loading dynamic library" << std::endl;
@@ -254,9 +335,3 @@ int test4() {
 }
 
 #endif
-
-int main()
-{
-  return  test11();
-
-}
