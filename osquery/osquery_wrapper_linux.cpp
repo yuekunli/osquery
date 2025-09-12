@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <optional>
 #include <iostream>
 
 #include <osquery/core/system.h>
@@ -457,13 +458,15 @@ class AQueryData
 {
 private:
     QueryData data;
-public:
-	AQueryData() : data() {}
 
-    AQueryData(QueryData const & qd): data(qd)
+	std::optional<std::map<std::string, std::string>::const_iterator> columnKeyIt;
+public:
+	AQueryData() : data(), columnKeyIt(std::nullopt){}
+
+    AQueryData(QueryData const & qd): data(qd), columnKeyIt(std::nullopt)
     {}
     
-	AQueryData(QueryData&& qd): data(std::move(qd))
+	AQueryData(QueryData&& qd): data(std::move(qd)), columnKeyIt(std::nullopt)
     {}
 
 	AQueryData(const AQueryData& rhs) = delete;
@@ -496,14 +499,17 @@ public:
 			return nullptr;
 		}
 		std::map<std::string, std::string>& column = data[0];
-		static std::map<std::string, std::string>::const_iterator it = column.cbegin();
+		if (!columnKeyIt.has_value())
+		{
+			columnKeyIt = column.cbegin();
+		}
+
         static std::string temp;
         
-        if (it != column.cend())
+        if (columnKeyIt != column.cend())
         {
-            temp = it->first;
-			
-			it = std::next(it);
+            temp = (*columnKeyIt)->first;
+			columnKeyIt = std::next((*columnKeyIt));
             return temp.c_str();
         }
 		else
