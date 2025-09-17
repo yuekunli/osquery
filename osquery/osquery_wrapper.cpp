@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <iostream>
 
 #include <osquery/core/system.h>
 #include <osquery/core/tables.h>
@@ -489,7 +490,7 @@ extern "C" __attribute__((visibility("default")))
 std::vector<std::map<std::string, std::string>> genDispatch(int tableId, std::map<std::string, std::vector<AdaConstraint>>const & constraints)
 {
     osquery::QueryContext ctx{};
-
+	
     for (auto const& entry : constraints)
     {
         for (auto const& oneRule : entry.second)
@@ -510,9 +511,12 @@ std::vector<std::map<std::string, std::string>> genDispatch(int tableId, std::ma
         }
         return data;
     }
-    if (virtualTables[tableId] != nullptr)
+
+    if (virtualTables[tableId] == nullptr)
     {
-        return (virtualTables[tableId])(ctx);
+		std::cout<<"table id maps to nullptr, "<< tableId <<std::endl;
+		return std::vector<std::map<std::string, std::string>>();
     }
-    return std::vector<std::map<std::string, std::string>>();
+    
+    return (virtualTables[tableId])(ctx);
 }
