@@ -9,12 +9,14 @@
 #include <osquery/sql/sql.h>
 
 static const int GEN_PROCESSES_TABLE_ID = 193;
+static const int GEN_SYSTEMD_UNITS_TABLE_ID = 234;
 
 namespace osquery
 {
     namespace tables
     {
       TableRows genProcesses(QueryContext& context);
+	  TableRows genSystemdUnits(QueryContext& context);
     }
 }
 
@@ -140,7 +142,7 @@ namespace osquery {
 		QueryData genSudoers(QueryContext& context);
 		QueryData genSuidBin(QueryContext& context);
 		QueryData genSystemControls(QueryContext& context);
-		QueryData genSystemdUnits(QueryContext& context);
+		//QueryData genSystemdUnits(QueryContext& context);
 		QueryData genSystemInfo(QueryContext& context);
 		QueryData genTime(QueryContext& context);
 		QueryData genTLSCertificate(QueryContext& context);
@@ -405,7 +407,7 @@ genDataFuncPtr virtualTables[] =
 	osquery::tables::genSystemControls, /*231*/
 	nullptr /*osquery::tables::genSystemextensions*/ /* 232 */,
 	osquery::tables::genSystemInfo, /*233*/
-	osquery::tables::genSystemdUnits, /*234*/
+	nullptr, /*osquery::tables::genSystemdUnits,*/ /*234*/
 	nullptr /*osquery::tables::genTemperaturesensors*/ /* 235 */,
 	osquery::tables::genTime, /*236*/
 	nullptr /*osquery::tables::genTimemachinebackups*/ /* 237 */,
@@ -594,6 +596,24 @@ void* genDispatch(int tableId, void* constraintHandle)
       aqd->getQd().emplace_back(tr->operator osquery::Row());
     }
     return aqd;
+  }
+
+  if (tableId == GEN_SYSTEMD_UNITS_TABLE_ID)
+  {
+    osquery::TableRows results = osquery::tables::genSystemdUnits(aqc->getCtx());
+    
+	AQueryData* aqd = new AQueryData();
+
+    for (auto const& tr : results)
+    {
+      aqd->getQd().emplace_back(tr->operator osquery::Row());
+    }
+    return aqd;
+  }
+
+  if (virtualTables[tableId] == nullptr)
+  {
+	return new AQueryData(std::vector<std::map<std::string, std::string>>());
   }
 
   return new AQueryData((virtualTables[tableId])(aqc->getCtx()));

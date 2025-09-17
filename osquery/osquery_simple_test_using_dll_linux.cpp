@@ -153,8 +153,7 @@ int testQueryTableNoConstraint(int tableId)
 
 int main()
 {
-  testQueryTableNoConstraint(109);
-  testQueryTableNoConstraint(109);
+  testQueryTableNoConstraint(80);
   return 0;
 
 }
