@@ -180,8 +180,95 @@ int test4() {
   return EXIT_SUCCESS;
 }
 
+int testTableNoConstraint(int tableId) {
+  std::cout << "Loading dll" << std::endl;
+  HMODULE dllHandle = LoadLibraryA("osqueryd.dll");
+  if (!dllHandle) {
+    std::cerr << "Fail to load Dll." << std::endl;
+    return 1;
+  }
+  std::cout << "dll loaded" << std::endl;
+
+  std::cout << "finding function address" << std::endl;
+  genDispatchFunctionPrototype genDispatch =
+      reinterpret_cast<genDispatchFunctionPrototype>(
+          GetProcAddress(dllHandle, "genDispatch"));
+
+  if (!genDispatch) {
+    std::cerr << "Fail to find function genFile_ex" << std::endl;
+    FreeLibrary(dllHandle);
+    return 2;
+  }
+  std::cout << "found function address" << std::endl;
+
+  using OneRow = std::map<std::string, std::string>;
+
+  std::map<std::string, std::vector<AdaConstraint>> constraints;
+
+  std::vector<OneRow> qd = genDispatch(tableId, constraints);
+
+  for (auto& row : qd) {
+    for (auto& p : row) {
+      std::cout << p.first << "     " << p.second << std::endl;
+    }
+  }
+
+  FreeLibrary(dllHandle);
+  return EXIT_SUCCESS;
+}
 
 int main()
 {
-  return  test4();
+  try {
+    testTableNoConstraint(35);
+  }
+  catch (const std::exception& ex)
+  {
+    std::cout << ex.what() << std::endl;
+  }
+
+  try {
+    testTableNoConstraint(102);
+  } catch (const std::exception& ex) {
+    std::cout << ex.what() << std::endl;
+  }
+
+
+  try {
+    testTableNoConstraint(120);
+  } catch (const std::exception& ex) {
+    std::cout << ex.what() << std::endl;
+  }
+
+  try {
+    testTableNoConstraint(173);
+  } catch (const std::exception& ex) {
+    std::cout << ex.what() << std::endl;
+  }
+
+  try {
+    testTableNoConstraint(12);
+  } catch (const std::exception& ex) {
+    std::cout << ex.what() << std::endl;
+  }
+
+  try {
+    testTableNoConstraint(239);
+  } catch (const std::exception& ex) {
+    std::cout << ex.what() << std::endl;
+  }
+
+  try {
+    testTableNoConstraint(109);
+  } catch (const std::exception& ex) {
+    std::cout << ex.what() << std::endl;
+  }
+
+  try {
+    testTableNoConstraint(175);
+  } catch (const std::exception& ex) {
+    std::cout << ex.what() << std::endl;
+  }
+
+
 }

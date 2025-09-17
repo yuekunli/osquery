@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <iostream>
 
 #include <osquery/core/system.h>
 #include <osquery/core/tables.h>
@@ -436,6 +437,12 @@ genDispatch(int tableId, std::map<std::string, std::vector<AdaConstraint>>const 
       data.emplace_back(tr->operator osquery::Row());
     }
     return data;
+  }
+  
+  if (virtualTables[tableId] == nullptr)
+  {
+    std::cout << "table id maps to nullptr, " << tableId << std::endl;
+    return std::vector<std::map<std::string, std::string>>();
   }
 
   return (virtualTables[tableId])(ctx);
